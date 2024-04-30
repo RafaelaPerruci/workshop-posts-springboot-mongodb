@@ -26,11 +26,23 @@ public class UserService {
     public User insert(User user) {
         return userRepository.insert(user);
     }
-    public User fromDTO(UserDTO objDTO){
-        return new User(objDTO.getId(), objDTO.getName(), objDTO.getEmail());
-    }
+
     public void delete(String id) {
         findById(id);
         userRepository.deleteById(id);
+    }
+    public User update(User user) {
+        User newObj = findById(user.getId());
+        updateData(newObj, user);
+        return userRepository.save(newObj);
+    }
+
+    private void updateData(User newObj, User user) {
+        newObj.setName(user.getName());
+        newObj.setEmail(user.getEmail());
+    }
+
+    public User fromDTO(UserDTO objDTO){
+        return new User(objDTO.getId(), objDTO.getName(), objDTO.getEmail());
     }
 }
