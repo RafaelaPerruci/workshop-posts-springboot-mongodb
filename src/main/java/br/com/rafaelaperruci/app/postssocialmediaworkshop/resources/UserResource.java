@@ -21,22 +21,29 @@ public class UserResource {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> findAll(){
+    public ResponseEntity<List<UserDTO>> findAll() {
         List<User> users = userService.findAll();
         List<UserDTO> usersDTOs = users.stream().map(UserDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(usersDTOs);  //o .ok() é o construtor do objeto ResponseEntity que dentro
     }                                            //do body da resposta tem a lista users
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable String id){
+    public ResponseEntity<UserDTO> findById(@PathVariable String id) {
         User user = userService.findById(id);
         return ResponseEntity.ok().body(new UserDTO(user));
     }
+
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody UserDTO userDTO){
+    public ResponseEntity<Void> insert(@RequestBody UserDTO userDTO) {
         User user = userService.fromDTO(userDTO);
         user = userService.insert(user);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).build(); //resposta vazia com status 201 e o header da URI contendo a
-    }                                               //localização do recurso criado
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
